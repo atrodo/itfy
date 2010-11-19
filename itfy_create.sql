@@ -13,11 +13,23 @@ CREATE TABLE IF NOT EXISTS `machine` (
 );
 
 --
+-- `project`
+--
+
+CREATE TABLE IF NOT EXISTS `project` (
+  `project_id` varchar(36) NOT NULL,
+  `name` varchar(32) NOT NULL,
+  `url` varchar(255) NOT NULL,
+  PRIMARY KEY (`project_id`)
+);
+
+--
 -- `bench_cmd`
 --
 
 CREATE TABLE IF NOT EXISTS `bench_cmd` (
   `bench_cmd_id` varchar(36) NOT NULL,
+  `project_id` varchar(36) NOT NULL,
   `interp` varchar(32) NOT NULL,
   `cmd` varchar(32) NOT NULL,
   `args` varchar(255) NOT NULL,

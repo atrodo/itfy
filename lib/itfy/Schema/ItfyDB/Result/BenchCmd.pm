@@ -23,6 +23,12 @@ __PACKAGE__->table("bench_cmd");
   is_nullable: 0
   size: 36
 
+=head2 project_id
+
+  data_type: 'varchar'
+  is_nullable: 0
+  size: 36
+
 =head2 interp
 
   data_type: 'varchar'
@@ -50,6 +56,8 @@ __PACKAGE__->table("bench_cmd");
 
 __PACKAGE__->add_columns(
   "bench_cmd_id",
+  { data_type => "varchar", is_nullable => 0, size => 36 },
+  "project_id",
   { data_type => "varchar", is_nullable => 0, size => 36 },
   "interp",
   { data_type => "varchar", is_nullable => 0, size => 32 },
