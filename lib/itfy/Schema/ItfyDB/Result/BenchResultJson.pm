@@ -39,4 +39,6 @@ __PACKAGE__->add_columns(
 __PACKAGE__->set_primary_key("bench_result_id");
 __PACKAGE__->uuid_columns("bench_result_id");
 
+__PACKAGE__->belongs_to('bench_result' => 'itfy::Schema::ItfyDB::Result::BenchResult', "bench_result_id");
+
 1;

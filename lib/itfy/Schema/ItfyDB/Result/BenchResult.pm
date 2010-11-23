@@ -69,6 +69,12 @@ __PACKAGE__->add_columns(
   { data_type => "varchar", is_nullable => 0, size => 36 },
   "bench_cmd_id",
   { data_type => "varchar", is_nullable => 0, size => 36 },
+  "revision",
+  { data_type => "varchar", is_nullable => 0, size => 40 },
+  "revision_date",
+  { data_type => "datetime", is_nullable => 0 },
+  "revision_stamp",
+  { data_type => "integer", is_nullable => 0 },
   "max_time",
   { data_type => "float", is_nullable => 0 },
   "avg_time",
@@ -82,5 +88,10 @@ __PACKAGE__->add_columns(
 );
 __PACKAGE__->set_primary_key("bench_result_id");
 __PACKAGE__->uuid_columns("bench_result_id");
+
+__PACKAGE__->has_one('bench_result_json' => 'itfy::Schema::ItfyDB::Result::BenchResultJson', "bench_result_id");
+
+__PACKAGE__->belongs_to('machine' => 'itfy::Schema::ItfyDB::Result::Machine', "machine_id");
+__PACKAGE__->belongs_to('bench_cmd' => 'itfy::Schema::ItfyDB::Result::BenchCmd', "bench_cmd_id");
 
 1;

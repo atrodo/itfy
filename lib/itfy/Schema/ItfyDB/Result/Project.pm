@@ -47,5 +47,8 @@ __PACKAGE__->add_columns(
 );
 __PACKAGE__->set_primary_key("project_id");
 __PACKAGE__->uuid_columns("project_id");
+__PACKAGE__->add_unique_constraint([ qw/name/ ]);
+
+__PACKAGE__->has_many('bench_cmds' => 'itfy::Schema::ItfyDB::Result::BenchCmd', "project_id");
 
 1;

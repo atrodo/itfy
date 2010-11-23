@@ -29,7 +29,7 @@ __PACKAGE__->table("machine");
   is_nullable: 0
   size: 32
 
-=head2 phsy_mem
+=head2 phys_mem
 
   data_type: 'varchar'
   is_nullable: 0
@@ -60,7 +60,7 @@ __PACKAGE__->add_columns(
   { data_type => "varchar", is_nullable => 0, size => 36 },
   "name",
   { data_type => "varchar", is_nullable => 0, size => 32 },
-  "phsy_mem",
+  "phys_mem",
   { data_type => "varchar", is_nullable => 0, size => 255 },
   "os",
   { data_type => "varchar", is_nullable => 0, size => 255 },
@@ -71,5 +71,8 @@ __PACKAGE__->add_columns(
 );
 __PACKAGE__->set_primary_key("machine_id");
 __PACKAGE__->uuid_columns("machine_id");
+__PACKAGE__->add_unique_constraint([ qw/name/ ]);
+
+__PACKAGE__->has_many('bench_results' => 'itfy::Schema::ItfyDB::Result::BenchResult', "machine_id");
 
 1;
