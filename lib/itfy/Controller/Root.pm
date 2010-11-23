@@ -30,7 +30,15 @@ sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
     # Hello World
-    $c->response->body( $c->welcome_message );
+    #$c->response->body( $c->welcome_message );
+    my $machine = $c->model("ItfyDB::Machine")->find({name => "ipfy"});
+    my $project = $c->model("ItfyDB::Project")->find({name => "Parrot"});
+    my $cmd_rs = $project->bench_cmds;
+
+    $c->stash->{machine}  = $machine;
+    $c->stash->{project}  = $project;
+    $c->stash->{cmd_rs}   = $cmd_rs;
+    $c->stash->{template} = 'index.tt2';
 }
 
 =head2 default

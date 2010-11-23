@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+ <title></title>
+ <link rel="stylesheet" title="Default Stylesheet" type="text/css" href="static/style.css">
+
+ <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.js"></script>
+ <script type="text/javascript" src="static/flot/jquery.flot.js"></script>
+</head>
+<body>
+ <div id="graph-container">
+  [% WHILE (cmd = cmd_rs.next) %]
+  [% result_rs = cmd.bench_results_rs.search_rs({}, {order_by => "revision_stamp desc", limit => 20,}) %]
+  <div class="cmd-label">[% cmd.name %]</div>
+  <div class="cmd-graph" id="[% cmd.id %]"></div>
+  <script type="text/javascript">
+    $(function()
+    {
+      var graph_div = $('#[% cmd.id %]');
+      graph_div
+      var data = {
+        data: [
+        [%~ WHILE (result = result_rs.next) ~%]
+          [ [% result.revision_stamp * 1000 %], [% result.avg_time %] ],
+        [%~ END ~%]
+      null],
+        lines: { show: true },
+        points: { show: true },
+        hoverable: true,
+        clickable: true,
+      };
+      var options =
+      {
+        yaxis:
+        {
+          min: 0,
+          tickFormatter: function (v, axis) { return Math.floor(v * 1000) + "ms"; }
+        },
+        xaxis:
+        {
+          tickFormatter: function (v, axis) { return (new Date(v)).toDateString(); }
+        },
+        legend:
+        {
+          show: false
+        },
+        grid:
+        {
+          hoverable: true,
+          clickable: true
+        }
+      };
+      $.plot(graph_div, [data], options);
+    });
+  </script>
+  [% END %]
+
+</body>
+</html>
+
+[%~ # vim:set filetype=xhtml: %]
