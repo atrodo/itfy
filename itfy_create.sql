@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `project` (
 CREATE TABLE IF NOT EXISTS `bench_cmd` (
   `bench_cmd_id` varchar(36) NOT NULL,
   `project_id` varchar(36) NOT NULL,
+  `name` varchar(32) NOT NULL,
   `interp` varchar(32) NOT NULL,
   `cmd` varchar(32) NOT NULL,
   `args` varchar(255) NOT NULL,
@@ -45,6 +46,9 @@ CREATE TABLE IF NOT EXISTS `bench_result` (
   `bench_result_id` varchar(36) NOT NULL,
   `machine_id` varchar(36) NOT NULL,
   `bench_cmd_id` varchar(36) NOT NULL,
+  `revision` varchar(40) NOT NULL,
+  `revision_date` datetime NOT NULL,
+  `revision_stamp` int unsigned NOT NULL,
   `max_time` float NOT NULL,
   `avg_time` float NOT NULL,
   `min_time` float NOT NULL,
