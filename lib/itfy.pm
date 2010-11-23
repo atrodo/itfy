@@ -32,9 +32,26 @@ $VERSION = eval $VERSION;
 # local deployment.
 
 __PACKAGE__->config(
-    name => 'itfy',
-    # Disable deprecated behavior needed by old applications
-    disable_component_resolution_regex_fallback => 1,
+  name => 'itfy',
+  # Disable deprecated behavior needed by old applications
+  disable_component_resolution_regex_fallback => 1,
+
+  default_view => "TT",
+  'View::JSON' =>
+  {
+    expose_stash => 'rpc',
+    allow_callback => 0,
+  },
+  'View::TT' =>
+  {
+      CATALYST_VAR => 'Catalyst',
+      INCLUDE_PATH => [
+          __PACKAGE__->path_to( 'root', 'src' ),
+      ],
+      #WRAPPER      => 'site/wrapper.tt2',
+      TEMPLATE_EXTENSION  => '.tt2',
+      EVAL_PERL   => 1,
+  },
 );
 
 # Start the application
