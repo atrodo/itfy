@@ -4,8 +4,8 @@
 
 CREATE TABLE IF NOT EXISTS `machine` (
   `machine_id` varchar(36) NOT NULL,
-  `name` varchar(32) NOT NULL,
-  `phsy_mem` varchar(255) NOT NULL,
+  `name` varchar(32) NOT NULL UNIQUE,
+  `phys_mem` varchar(255) NOT NULL,
   `os` varchar(255) NOT NULL,
   `cpu` varchar(255) NOT NULL,
   `cpu_speed` varchar(255) NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `machine` (
 
 CREATE TABLE IF NOT EXISTS `project` (
   `project_id` varchar(36) NOT NULL,
-  `name` varchar(32) NOT NULL,
+  `name` varchar(32) NOT NULL UNIQUE,
   `url` varchar(255) NOT NULL,
   PRIMARY KEY (`project_id`)
 );
