@@ -1,33 +1,72 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
- <title></title>
+ <title>isparrotfastyet</title>
  <link rel="stylesheet" title="Default Stylesheet" type="text/css" href="static/style.css">
-
- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.js"></script>
- <script type="text/javascript" src="static/flot/jquery.flot.js"></script>
+  [% USE date(format = '%b-%d-%Y') # %H:%M:%S') %]
+  [% MACRO round(n, p) PERL %]
+    my $n = $stash->get('n');
+    my $p = $stash->get('p') || 1;
+    $n = int( ($n + 0.5) * $p ) / $p;
+    print $n;
+  [% END %]
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.js"></script>
+  <script type="text/javascript" src="static/flot/jquery.flot.js"></script>
 </head>
 <body>
  <div id="graph-container">
   [% WHILE (cmd = cmd_rs.next) %]
-  [% result_rs = cmd.bench_results_rs.search_rs({}, {order_by => "revision_stamp desc", limit => 20,}) %]
+  [% result_rs = cmd.bench_results_rs.search_rs({}, {order_by => "revision_stamp asc", limit => 20,}) %]
   <div class="cmd-label">[% cmd.name %]</div>
-  <div class="cmd-graph" id="[% cmd.id %]"></div>
+  <div id="[% cmd.id %]">
+  [% last_speed = undef %]
+  <div class="details_hold">
+  [%~ WHILE (result = result_rs.next) ~%]
+    <div class="point_details">
+      Speed: <span class="speed">[% round(result.avg_time, 1000) %]</span>s
+      <br/>
+      [% IF last_speed %]
+        [% delta = last_speed - result.avg_time %]
+        &Delta; <span class="delta">[% round(delta, 1000) %]</span>s
+        [% percent = round(((delta / last_speed) * 100), 100) %]
+        [% IF percent >= 0 %]
+        (<span class='percent'>[% percent %]</span>% Better)
+        [% ELSE %]
+        (<span class='percent'>[% 0-percent %]</span>% Worse)
+        [% END %]
+        <br/>
+      [% END %]
+      [% last_speed = result.avg_time %]
+      Revision <span class="revision">[% result.revision.substr(0,8) %]</span>
+      [% IF result.revision_aka.defined %]
+      (<span class='rev_aka'>[% result.revision_aka %]</span>)
+      [% END %]
+      <br/>
+      Dated <span class='rev_date'>[% date.format(result.revision_stamp) %]</span>
+    </div>
+  [%~ END ~%]
+  </div>
+  [% CALL result_rs.reset %]
+  </div>
   <script type="text/javascript">
     $(function()
     {
       var graph_div = $('#[% cmd.id %]');
       graph_div
+        .addClass('cmd-graph')
+
+      var point_details = graph_div.find('div.point_details').detach();
+
       var data = {
         data: [
-        [%~ WHILE (result = result_rs.next) ~%]
-          [ [% result.revision_stamp * 1000 %], [% result.avg_time %] ],
-        [%~ END ~%]
-      null],
+          [%~ WHILE (result = result_rs.next) ~%]
+            [ [% result.revision_stamp * 1000 %], [% result.avg_time %] ],
+          [%~ END ~%]
+        null],
         lines: { show: true },
         points: { show: true },
         hoverable: true,
-        clickable: true,
+        clickable: true
       };
       var options =
       {
@@ -51,6 +90,46 @@
         }
       };
       $.plot(graph_div, [data], options);
+
+      tooltip = $("<div />")
+        .addClass('tooltip')
+        .css("opacity", "0.8")
+        .appendTo($("body"))
+
+      var previousIndex = null;
+
+      graph_div
+        .bind("plothover", function(e, pos, item)
+        {
+          if (item)
+          {
+            if (previousIndex != item.dataIndex)
+            {
+              previousIndex = item.dataIndex;
+
+              tooltip
+                .stop(true, true)
+                .hide()
+                .empty()
+                .append(point_details.eq(item.dataIndex).clone())
+                .css({
+                  "top": item.pageY,
+                  "left": item.pageX
+                })
+                .fadeIn()
+            }
+          }
+          else
+          {
+            if (previousIndex != null)
+            {
+              console.log("fadeOut")
+              tooltip
+                .fadeOut("slow");
+              previousIndex = null;            
+            }
+          }
+        })
     });
   </script>
   [% END %]

@@ -17,15 +17,25 @@ div.cmd-graph
   height: 240px;
 }
 
-#tooltip {
-  -moz-border-radius:.35em;
-  -webkit-border-radius:.35em;
-  background-color:#000;
-  color:#FFF;
-  display:none;
-  opacity:0.8;
-  padding:.25em;
-  position:absolute;
+div.details_hold
+{
+  width: 16em;
+}
+
+.point_details {
+  border-radius: 0.3em;
+  -moz-border-radius: 0.3em;
+  -webkit-border-radius: 0.3em;
+  background-color: #333333;
+  color: #ffffff;
+  padding: 0.3em;
+  position: relative;
+  margin: 0.5em;
+}
+
+div.tooltip
+{
+  position: absolute;
 }
 #tooltip a:link, #tooltip a:active, #tooltip a:visited {
   color:#FFF;
