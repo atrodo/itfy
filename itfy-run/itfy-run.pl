@@ -22,13 +22,16 @@ foreach my $rev (@ARGV)
 {
   chdir $root;
 
+  warn "Building...\n";
+  system("bash build-it.sh $rev 1>/dev/null 2>/dev/null");
+
   my $git_log = qx/git log $rev -1 --format=%H:%ct:%cD/;
   chomp $git_log;
 
   my ($rev_hash, $rev_stamp, $rev_date) = split m/:/, $git_log, 3;
 
-  warn "Building...\n";
-  system("bash build-it.sh $rev 1>/dev/null 2>/dev/null");
+  my $git_describe = qx/git describe $rev --tags/;
+  chomp $git_describe;
 
   warn "Running commands...\n";
   foreach my $cmd ($project->bench_cmds->all)
