@@ -106,10 +106,13 @@ sub add_result_json
     max_time => $json->{max_time},
     avg_time => $json->{avg_time},
     min_time => $json->{min_time},
+    submit_stamp => time,
     total_time => $json->{total_time},
     total_runs => $json->{total_runs},
     revision => $args->{revision},
+    revision_aka => $args->{revision_aka},
     revision_date => $args->{revision_date},
+    revision_stamp => $args->{revision_stamp},
     machine => $args->{machine},
   });
 

@@ -48,6 +48,7 @@ foreach my $rev (@ARGV)
 
     $cmd->add_result_json({
       revision => $rev_hash,
+      revision_aka => $git_describe,
       revision_date => $rev_date,
       revision_stamp => $rev_stamp,
       machine => $machine,
