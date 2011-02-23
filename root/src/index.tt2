@@ -7,7 +7,7 @@
   [% MACRO round(n, p) PERL %]
     my $n = $stash->get('n');
     my $p = $stash->get('p') || 1;
-    $n = int( ($n + 0.5) * $p ) / $p;
+    $n = int( $n * $p ) / $p;
     print $n;
   [% END %]
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.js"></script>
