@@ -17,12 +17,27 @@
 <body>
  <div id="graph-container">
   [% WHILE (cmd = cmd_rs.next) %]
-  [% result_rs = cmd.bench_results_rs.search_rs({}, {order_by => "revision_stamp asc", limit => 20,}) %]
+  [% PERL %]
+    my $cmd = $stash->get("cmd");
+    $stash->set("result_rows", [$cmd->bench_results_rs->search(
+      {
+      }, {
+        order_by => "revision_stamp desc",
+        rows => 20,
+        '+select' => [{max => 'submit_stamp', '-as' => 'max_submit_stamp'}],
+        #distinct => 1,
+        group_by => [qw/revision/],
+        having => {submit_stamp => \"= max_submit_stamp"},
+      })->all]
+    );
+  [% END %]
+  [% result_rows = result_rows.reverse %]
   <div class="cmd-label">[% cmd.name %]</div>
   <div id="[% cmd.id %]">
   [% last_speed = undef %]
+  <!-- [% result_rows.size %] -->
   <div class="details_hold">
-  [%~ WHILE (result = result_rs.next) ~%]
+  [%~ FOREACH result IN result_rows ~%]
     <div class="point_details">
       Speed: <span class="speed">[% round(result.avg_time, 1000) %]</span>s
       <br/>
@@ -47,7 +62,7 @@
     </div>
   [%~ END ~%]
   </div>
-  [% CALL result_rs.reset %]
+  [% #CALL result_rs.reset %]
   </div>
   <script type="text/javascript">
     $(function()
@@ -60,7 +75,7 @@
 
       var data = {
         data: [
-          [%~ WHILE (result = result_rs.next) ~%]
+          [%~ FOREACH result IN result_rows ~%]
             [ [% result.revision_stamp * 1000 %], [% result.avg_time %] ],
           [%~ END ~%]
         null],
