@@ -8,6 +8,7 @@ use lib "$FindBin::Bin/../lib";
 use local::lib "$FindBin::Bin/../perl5";
 use lib "$FindBin::Bin/../../tool_bench/lib/";
 
+use autodie qw/:all/;
 use itfy::Schema::ItfyDB;
 require Tool::Bench;
 
