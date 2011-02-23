@@ -139,7 +139,6 @@
           {
             if (previousIndex != null)
             {
-              console.log("fadeOut")
               tooltip
                 .fadeOut("slow");
               previousIndex = null;            
