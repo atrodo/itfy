@@ -73,6 +73,6 @@ __PACKAGE__->set_primary_key("machine_id");
 __PACKAGE__->uuid_columns("machine_id");
 __PACKAGE__->add_unique_constraint([ qw/name/ ]);
 
-__PACKAGE__->has_many('bench_results' => 'itfy::Schema::ItfyDB::Result::BenchResult', "machine_id");
+__PACKAGE__->has_many('bench_runs' => 'itfy::Schema::ItfyDB::Result::BenchRun', "machine_id");
 
 1;
