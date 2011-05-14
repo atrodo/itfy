@@ -1,0 +1,51 @@
+{
+  project:
+  [
+    {
+      name : "Parrot",
+      url  : "git://github.com/parrot/parrot.git",
+
+      bench_cmd:
+      [
+        {
+          name   : "oofib 32",
+          desc   : "The object-oriented parrot benchmark that calculates the 32 sequence of fibonacci",
+          cmd    : "./parrot examples/benchmarks/oofib.pir 32",
+          count  : 5,
+          shown  : true
+        },
+      ],
+
+      branch: [
+        "master"
+      ]
+    },
+
+    {
+      name : "Rakudo",
+      url  : "git://github.com/rakudo/rakudo.git",
+
+      bench_cmd:
+      [
+        {
+          name   : "rakudo startup",
+          desc   : "The startup time of rakudo",
+          cmd    : "../parrot_install/bin/perl6 -e ''",
+          count  : 5,
+          shown  : true
+        },
+        {
+          name   : "perl6-bench *.p6",
+          desc   : "Runs *.p6 from https://github.com/perl6/bench-scripts",
+          cmd    : "../bench-scripts/run_all",
+          count  : 5,
+          shown  : true
+        }
+      ],
+
+      branch: [
+        "master"
+      ]
+    }
+  ],
+}
