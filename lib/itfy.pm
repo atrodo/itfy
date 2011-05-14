@@ -3,6 +3,8 @@ use Moose;
 use namespace::autoclean;
 
 use Catalyst::Runtime 5.80;
+use Try::Tiny;
+use LWP::Simple;
 
 # Set flags and add plugins for the application
 #
@@ -57,6 +59,37 @@ __PACKAGE__->config(
 # Start the application
 __PACKAGE__->setup();
 
+# Load up remote config now
+
+sub load_meta_config
+{
+  my $c = shift;
+
+  $DB::single = 1;
+  use JSON;
+
+  $c->log->debug("Loading meta_config\n");
+
+  try
+  {
+    warn $c->config->{meta_json};
+    my $browser = LWP::UserAgent->new;
+    my $response = $browser->get( $c->config->{meta_json} );
+    die "Can't get it -- ", $response->status_line
+       unless $response->is_success;
+
+    my $json_raw = $response->decoded_content;
+
+    my $conv = JSON->new->relaxed->allow_barekey;
+    my $json = $conv->decode($json_raw);
+
+    $c->model("ItfyDB")->schema->import_config($json);
+  } catch {
+    warn $_;
+  };
+}
+
+__PACKAGE__->load_meta_config();
 
 =head1 NAME
 

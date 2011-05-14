@@ -5,5 +5,6 @@ require FindBin;
     connect_info => [
       "dbi:SQLite:dbname=$FindBin::Bin/../itfy.sqlite",
     ],
-  }
+  },
+  meta_json => "",
 }
