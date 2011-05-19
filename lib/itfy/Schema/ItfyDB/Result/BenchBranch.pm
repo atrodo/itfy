@@ -17,28 +17,6 @@ itfy::Schema::ItfyDB::Result::BenchBranch
 
 __PACKAGE__->table("bench_branch");
 
-=head1 ACCESSORS
-
-=head2 bench_branch_id
-
-  data_type: 'varchar'
-  is_nullable: 0
-  size: 36
-
-=head2 project_id
-
-  data_type: 'varchar'
-  is_nullable: 0
-  size: 36
-
-=head2 name
-
-  data_type: 'varchar'
-  is_nullable: 0
-  size: 32
-
-=cut
-
 __PACKAGE__->add_columns(
   "bench_branch_id",
   { data_type => "varchar", is_nullable => 0, size => 36 },

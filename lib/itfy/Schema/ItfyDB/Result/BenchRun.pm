@@ -17,55 +17,6 @@ itfy::Schema::ItfyDB::Result::BenchRun
 
 __PACKAGE__->table("bench_run");
 
-=head1 ACCESSORS
-
-=head2 bench_run_id
-
-  data_type: 'varchar'
-  is_nullable: 0
-  size: 36
-
-=head2 machine_id
-
-  data_type: 'varchar'
-  is_nullable: 0
-  size: 36
-
-=head2 bench_branch_id
-
-  data_type: 'varchar'
-  is_nullable: 0
-  size: 36
-
-=head2 revision
-
-  data_type: 'varchar'
-  is_nullable: 0
-  size: 40
-
-=head2 revision_aka
-
-  data_type: 'varchar'
-  is_nullable: 0
-  size: 40
-
-=head2 revision_date
-
-  data_type: 'datetime'
-  is_nullable: 0
-
-=head2 revision_stamp
-
-  data_type: 'int unsigned'
-  is_nullable: 0
-
-=head2 submit_stamp
-
-  data_type: 'int unsigned'
-  is_nullable: 0
-
-=cut
-
 __PACKAGE__->add_columns(
   "bench_run_id",
   { data_type => "varchar", is_nullable => 0, size => 36 },

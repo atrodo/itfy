@@ -15,28 +15,6 @@ itfy::Schema::ItfyDB::Result::BenchCmd
 
 __PACKAGE__->table("project");
 
-=head1 ACCESSORS
-
-=head2 project_id
-
-  data_type: 'varchar'
-  is_nullable: 0
-  size: 36
-
-=head2 name
-
-  data_type: 'varchar'
-  is_nullable: 0
-  size: 32
-
-=head2 url
-
-  data_type: 'varchar'
-  is_nullable: 0
-  size: 255
-
-=cut
-
 __PACKAGE__->add_columns(
   "project_id",
   { data_type => "varchar", is_nullable => 0, size => 36 },

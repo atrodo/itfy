@@ -15,21 +15,6 @@ itfy::Schema::ItfyDB::Result::BenchResultJson
 
 __PACKAGE__->table("bench_result_json");
 
-=head1 ACCESSORS
-
-=head2 bench_result_id
-
-  data_type: 'varchar'
-  is_nullable: 0
-  size: 36
-
-=head2 json
-
-  data_type: 'text'
-  is_nullable: 0
-
-=cut
-
 __PACKAGE__->add_columns(
   "bench_result_id",
   { data_type => "varchar", is_nullable => 0, size => 36 },
