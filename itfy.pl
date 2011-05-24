@@ -7,4 +7,5 @@ require FindBin;
     ],
   },
   meta_json => "",
+  meta_repo_root => "$FindBin::Bin/../meta_repo",
 }
