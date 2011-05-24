@@ -4,7 +4,7 @@ use namespace::autoclean;
 
 use Catalyst::Runtime 5.80;
 use Try::Tiny;
-use LWP::Simple;
+use LWP::UserAgent;
 
 # Set flags and add plugins for the application
 #
@@ -68,11 +68,10 @@ sub load_meta_config
   $DB::single = 1;
   use JSON;
 
-  $c->log->debug("Loading meta_config\n");
+  $c->log->debug("Loading meta_config: " . $c->config->{meta_json});
 
   try
   {
-    warn $c->config->{meta_json};
     my $browser = LWP::UserAgent->new;
     my $response = $browser->get( $c->config->{meta_json} );
     die "Can't get it -- ", $response->status_line
