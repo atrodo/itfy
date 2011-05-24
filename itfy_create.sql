@@ -4,6 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS `machine` (
   `machine_id` varchar(36) NOT NULL,
+  `api_key` varchar(36) NOT NULL UNIQUE,
   `name` varchar(32) NOT NULL UNIQUE,
   `phys_mem` varchar(255) NOT NULL,
   `os` varchar(255) NOT NULL,
