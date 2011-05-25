@@ -74,9 +74,11 @@ sub revhash
   }
 
   return {
+    project => $proj->name,
     git_name => $proj->git_name,
     url => $proj->url,
-    rev => $rev->bench_branch_rev_id,
+    rev_id => $rev->bench_branch_rev_id,
+    rev => $rev->revision,
     cmds => [@cmds],
     children => [@children],
   };
@@ -192,14 +194,15 @@ sub add_branch_rev :Private
       get_rev($c, $git_name, $rev),
     });
 
-    my $dep_rs = $project->dependencies;
+    my $dep_rs = $new_rev->bench_branch->dependencies;
     while (my $dep = $dep_rs->next)
     {
-      $dep = $dep->dep_project;
+      $dep = $dep->dep_bench_branch;
       $new_rev->create_related("children",
       {
-        bench_branch_id => $branch->bench_branch_id,
-        get_rev_bydate($c, $dep->git_name, $new_rev->revision_date),
+        bench_branch_id => $dep->bench_branch_id,
+        #parent_bench_branch_id => $new_rev->bench_branch_id,
+        get_rev_bydate($c, $dep->project->git_name, $new_rev->revision_date),
       });
     }
   };
