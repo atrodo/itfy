@@ -53,12 +53,23 @@ CREATE TABLE IF NOT EXISTS `bench_branch` (
 );
 
 --
+-- `bench_branch_dep`
+--
+
+CREATE TABLE IF NOT EXISTS `bench_branch_dep` (
+  `bench_branch_id` varchar(36) NOT NULL,
+  `dep_bench_branch_id` varchar(36) NOT NULL,
+  PRIMARY KEY (`bench_branch_id`, `dep_bench_branch_id`)
+);
+
+--
 -- `bench_branch_rev`
 --
 
 CREATE TABLE IF NOT EXISTS `bench_branch_rev` (
   `bench_branch_rev_id` varchar(36) NOT NULL,
   `bench_branch_id` varchar(36) NOT NULL,
+  `parent_bench_branch_rev_id` varchar(36),
   `revision` varchar(40) NOT NULL,
   `revision_aka` varchar(40) NOT NULL,
   `revision_date` datetime NOT NULL,

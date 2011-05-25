@@ -31,5 +31,6 @@ __PACKAGE__->add_unique_constraint([ qw/project_id name/ ]);
 
 __PACKAGE__->has_many('revs' => 'itfy::Schema::ItfyDB::Result::BenchBranchRev', "bench_branch_id");
 __PACKAGE__->belongs_to('project' => 'itfy::Schema::ItfyDB::Result::Project', "project_id");
+__PACKAGE__->has_many('dependencies' => 'itfy::Schema::ItfyDB::Result::BenchBranchDep', "bench_branch_id");
 
 1;
