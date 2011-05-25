@@ -24,6 +24,8 @@ __PACKAGE__->add_columns(
   { data_type => "varchar", is_nullable => 0, size => 36 },
   "name",
   { data_type => "varchar", is_nullable => 0, size => 32 },
+  "ref",
+  { data_type => "varchar", is_nullable => 0, size => 32 },
 );
 __PACKAGE__->set_primary_key("bench_branch_id");
 __PACKAGE__->uuid_columns("bench_branch_id");

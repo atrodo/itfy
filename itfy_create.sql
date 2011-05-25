@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS `bench_branch` (
   `bench_branch_id` varchar(36) NOT NULL,
   `project_id` varchar(36) NOT NULL,
   `name` varchar(32) NOT NULL,
+  `ref` varchar(32) NOT NULL,
   UNIQUE (`project_id`, `name`),
   PRIMARY KEY (`bench_branch_id`)
 );
