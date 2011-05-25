@@ -28,5 +28,15 @@ __PACKAGE__->uuid_columns("project_id");
 __PACKAGE__->add_unique_constraint([ qw/name/ ]);
 
 __PACKAGE__->has_many('bench_cmds' => 'itfy::Schema::ItfyDB::Result::BenchCmd', "project_id");
+__PACKAGE__->has_many('bench_branch' => 'itfy::Schema::ItfyDB::Result::BenchBranch', "project_id");
+
+sub git_name
+{
+  my $self = shift;
+  my $url = $self->url;
+
+  $url =~ s[^ .* / (\w*) [.] git $ ][$1]xms;
+  return $url;
+}
 
 1;

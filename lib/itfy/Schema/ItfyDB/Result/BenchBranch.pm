@@ -27,7 +27,9 @@ __PACKAGE__->add_columns(
 );
 __PACKAGE__->set_primary_key("bench_branch_id");
 __PACKAGE__->uuid_columns("bench_branch_id");
+__PACKAGE__->add_unique_constraint([ qw/project_id name/ ]);
 
+__PACKAGE__->has_many('revs' => 'itfy::Schema::ItfyDB::Result::BenchBranchRev', "bench_branch_id");
 __PACKAGE__->belongs_to('project' => 'itfy::Schema::ItfyDB::Result::Project', "project_id");
 
 1;
