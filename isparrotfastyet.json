@@ -17,8 +17,14 @@
       ],
 
       branch: [
-        "master"
-      ]
+        {
+          name : "master",
+          ref  : "master",
+          dependencies: [
+            "Rakudo:master"
+          ]
+        }
+      ],
     },
 
     {
@@ -44,7 +50,10 @@
       ],
 
       branch: [
-        "master"
+        {
+          name : "master",
+          ref  : "master"
+        }
       ]
     }
   ],
