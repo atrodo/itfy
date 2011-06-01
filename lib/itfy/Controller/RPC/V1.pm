@@ -151,10 +151,14 @@ sub get_rev
 
   local $ENV{GIT_DIR} = $c->config->{meta_repo_root} . "/$git_name/.git";
 
-  system("git fetch");
+  my $git_log = qx/git log $rev -1 --format=%H:%ct:%cD/;
+  if ( !defined $git_log )
+  {
+    system("git fetch");
+    my $git_log = qx/git log $rev -1 --format=%H:%ct:%cD/;
+  }
 
   # Find the aka, date and stamp
-  my $git_log = qx/git log $rev -1 --format=%H:%ct:%cD/;
   chomp $git_log;
 
   my ( $rev_hash, $rev_stamp, $rev_date ) = split m/:/, $git_log, 3;
