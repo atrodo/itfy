@@ -42,40 +42,4 @@ __PACKAGE__->has_many('bench_results' => 'itfy::Schema::ItfyDB::Result::BenchRes
 
 __PACKAGE__->belongs_to('project' => 'itfy::Schema::ItfyDB::Result::Project', "project_id");
 
-sub add_result_json
-{
-  my $self = shift;
-  my $args = shift;
-
-  my $json = JSON::Any->jsonToObj($args->{json});
-
-  if (ref $json eq "ARRAY")
-  {
-    foreach my $timing (@$json)
-    {
-      $self->add_result_json({ %$args, json => JSON::Any->objToJson($timing)});
-    }
-    return;
-  }
-
-  my $result = $self->create_related("bench_results",
-  {
-    max_time => $json->{max_time},
-    avg_time => $json->{avg_time},
-    min_time => $json->{min_time},
-    submit_stamp => time,
-    total_time => $json->{total_time},
-    total_runs => $json->{total_runs},
-    revision => $args->{revision},
-    revision_aka => $args->{revision_aka},
-    revision_date => $args->{revision_date},
-    revision_stamp => $args->{revision_stamp},
-    machine => $args->{machine},
-  });
-
-  $result->create_related("bench_result_json", {
-    json => $args->{json},
-  });
-}
-
 1;
