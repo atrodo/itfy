@@ -69,8 +69,10 @@ sub revhash
   {
     push @cmds,
         {
-      cmd   => $cmd->cmd,
-      count => $cmd->count,
+      cmd    => $cmd->cmd,
+      cmd_id => $cmd->bench_cmd_id,
+      name   => $cmd->name,
+      count  => $cmd->count,
         };
   }
 
