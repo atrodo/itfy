@@ -44,4 +44,6 @@ __PACKAGE__->belongs_to('parent' => 'itfy::Schema::ItfyDB::Result::BenchBranchRe
 
 __PACKAGE__->has_many('children' => 'itfy::Schema::ItfyDB::Result::BenchBranchRev', {"foreign.parent_bench_branch_rev_id" => "self.bench_branch_rev_id"});
 
+__PACKAGE__->has_many('bench_run' => 'itfy::Schema::ItfyDB::Result::BenchRun', "bench_branch_rev_id");
+
 1;
