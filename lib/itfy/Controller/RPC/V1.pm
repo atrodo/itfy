@@ -126,6 +126,40 @@ sub todo : Private
   $c->log->debug( Data::Dumper::Dumper( $c->stash->{rpcout}->{list} ) );
 }
 
+sub rev_done : Private
+{
+  my $self = shift;
+  my $c    = shift;
+
+  my $rpcin = JSON::Any->jsonToObj( $c->request->params->{results} || "[]" );
+
+  $c->model('ItfyDB')->schema->txn_do(
+    sub
+    {
+      foreach my $rev (@$rpcin)
+      {
+        my $bench_branch_rev
+            = $c->model('ItfyDB::BenchBranchRev')->find( $rev->{rev_id} );
+        next
+            unless defined $bench_branch_rev;
+
+        my $run = $bench_branch_rev->create_related(
+          'bench_run',
+          {
+            machine_id   => $c->stash->{machine}->machine_id,
+            submit_stamp => time,
+          }
+        );
+
+        foreach my $cmd ( @{ $rev->{results} } )
+        {
+          $run->add_result_json( $cmd->{cmd_id}, $cmd->{result} );
+        }
+      }
+    }
+  );
+}
+
 use Data::Dumper;
 
 sub get_rev_bydate
