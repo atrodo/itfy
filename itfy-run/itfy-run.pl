@@ -82,11 +82,63 @@ while (1)
 
     };
 
+    my $bench_it = sub
+    {
+      my $project = shift;
+
+      chdir $config->{build_root};
+
+      my @result;
+      foreach my $cmd (@{ $project->{cmds} })
+      {
+        warn "  T::B-ing " . $cmd->{name} . "...\n";
+        my $bench= Tool::Bench->new;
+        my $exec = $cmd->{cmd};
+        $bench->add_items( $cmd->{name} => sub{qx{$exec}});
+        $bench->run($cmd->{count});
+        my $json = $bench->report(
+          format => "JSON",
+          interp => $cmd->{cmd},
+        );
+
+        push @result, {
+          cmd_id => $cmd->{cmd_id},
+          result => $json,
+        }
+      }
+
+      return {
+        rev => $project->{rev},
+        rev_id => $project->{rev_id},
+        results => [@result],
+      };
+    };
+
+    my @cmds;
+
     $build_it->($todo);
+
     foreach my $child ( @{ $todo->{children} } )
     {
       $build_it->($child);
     }
+
+    my @results;
+
+    push @results, $bench_it->($todo);
+    foreach my $child ( @{ $todo->{children} } )
+    {
+      push @results, $bench_it->($child);
+    }
+
+    my $result_json = JSON::Any->objToJson(\@results);
+    warn $result_json;
+    my $response = $browser->post("$host/rpc/v1/$key/rev_done", {results => $result_json});
+
+    die "Can't get it -- ", $response->status_line
+        unless $response->is_success;
+
+    die Data::Dumper::Dumper(\@results);
 
   }
 
