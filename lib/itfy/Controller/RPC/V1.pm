@@ -264,12 +264,16 @@ sub add_branch_rev : Private
     }
   );
 
+  $c->log->debug("Branch: $branch_name");
+  return
+    if !defined $branch;
+
   # Find the final, pushed revision
   my $rev = $rpcin->{after};
 
   # Save the revision
-  eval {
-    my $new_rev = $branch->create_related(
+  try {
+    my $new_rev = $branch->find_or_create_related(
       "revs",
       {
         get_rev( $c, $git_name, $rev ),
@@ -280,7 +284,7 @@ sub add_branch_rev : Private
     while ( my $dep = $dep_rs->next )
     {
       $dep = $dep->dep_bench_branch;
-      $new_rev->create_related(
+      $new_rev->find_or_create_related(
         "children",
         {
           bench_branch_id => $dep->bench_branch_id,
@@ -292,6 +296,12 @@ sub add_branch_rev : Private
         }
       );
     }
+
+    $c->log->debug("Saved rev_id: " . $new_rev->id);
+  }
+  catch
+  {
+    $c->log->debug("Failure: $_");
   };
 }
 
