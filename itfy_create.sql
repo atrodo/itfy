@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `bench_branch_rev` (
   `revision_aka` varchar(40) NOT NULL,
   `revision_date` datetime NOT NULL,
   `revision_stamp` int unsigned NOT NULL,
-  UNIQUE (`bench_branch_id`, `revision`),
+  UNIQUE (`bench_branch_id`, `parent_bench_branch_rev_id`, `revision`),
   PRIMARY KEY (`bench_branch_rev_id`)
 );
 
