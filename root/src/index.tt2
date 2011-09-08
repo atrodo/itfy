@@ -11,74 +11,85 @@
     print $n;
   [% END %]
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.js"></script>
-  <script type="text/javascript" src="static/flot/jquery.flot.js"></script>
+  <script type="text/javascript" src="static/flot/jquery.flot.min.js"></script>
+  <script type="text/javascript" src="static/flot/jquery.flot.selection.min.js"></script>
   <!--[if IE]><script type="text/javascript" src="static/excanvas.compiled.js"></script><![endif]-->
 </head>
 <body>
  <div id="graph-container">
   [% WHILE (cmd = cmd_rs.next) %]
-  [% PERL %]
-    my $cmd = $stash->get("cmd");
-    $stash->set("result_rows", [$cmd->bench_results_rs->search(
-      {
-      }, {
-        order_by => "revision_stamp desc",
-        rows => 20,
-        '+select' => [{max => 'submit_stamp', '-as' => 'max_submit_stamp'}],
-        #distinct => 1,
-        group_by => [qw/revision/],
-        having => {submit_stamp => \"= max_submit_stamp"},
-      })->all]
-    );
-  [% END %]
-  [% result_rows = result_rows.reverse %]
+  [% IF !results_by_cmd.exists(cmd.bench_cmd_id); NEXT; END %]
+
   <div class="cmd-label">[% cmd.name %]</div>
   <div id="[% cmd.id %]">
-  [% last_speed = undef %]
-  <!-- [% result_rows.size %] -->
-  <div class="details_hold">
-  [%~ FOREACH result IN result_rows ~%]
-    <div class="point_details">
-      Speed: <span class="speed">[% round(result.avg_time, 1000) %]</span>s
-      <br/>
-      [% IF last_speed %]
-        [% delta = last_speed - result.avg_time %]
-        &Delta; <span class="delta">[% round(delta, 1000) %]</span>s
-        [% percent = round(((delta / last_speed) * 100), 100) %]
-        [% IF percent >= 0 %]
-        (<span class='percent'>[% percent %]</span>% Better)
-        [% ELSE %]
-        (<span class='percent'>[% 0-percent %]</span>% Worse)
-        [% END %]
+    [% last_speed = undef %]
+    [% last_stamp = undef %]
+    <div class="details_hold">
+    [%~ FOREACH result IN
+        results_by_cmd.item(cmd.bench_cmd_id).sort('revision_stamp') %]
+      <div class="point_details">
+        Speed: <span class="speed">[% round(result.avg_time, 1000) %]</span>s
         <br/>
-      [% END %]
-      [% last_speed = result.avg_time %]
-      Revision <span class="revision">[% result.revision.substr(0,8) %]</span>
-      [% IF result.revision_aka.defined %]
-      (<span class='rev_aka'>[% result.revision_aka %]</span>)
-      [% END %]
-      <br/>
-      Dated <span class='rev_date'>[% date.format(result.revision_stamp) %]</span>
+        [% FILTER collapse %]
+        [% IF last_speed %]
+          [% delta = last_speed - result.avg_time %]
+          &Delta; <span class="delta">[% round(delta, 1000) %]</span>s
+          [% percent = round(((delta / last_speed) * 100), 100) %]
+          [% IF percent >= 0 %]
+          (<span class='percent'>[% percent %]</span>% Better)
+          [% ELSE %]
+          (<span class='percent'>[% 0-percent %]</span>% Worse)
+          [% END %]
+          <br/>
+        [% END %]
+        [% last_speed = result.avg_time %]
+        [% END %]
+        Revision <span class="revision">[% result.revision.substr(0,8) %]</span>
+        [% IF result.revision_aka.defined ~%]
+        (<span class='rev_aka'>[% result.revision_aka %]</span>)
+        [%~ END %]
+        <br/>
+        Dated <span class='rev_date'>[% date.format(result.revision_stamp) %]</span>
+        <span class='rev_stamp hidden'>[% result.revision_stamp %]</span>
+      </div>
+      [% last_stamp = result.revision_stamp %]
+    [%~ END ~%]
     </div>
-  [%~ END ~%]
   </div>
-  [% #CALL result_rs.reset %]
-  </div>
+  <div id="[% cmd.id %]_overview"></div>
   <script type="text/javascript">
     $(function()
     {
       var graph_div = $('#[% cmd.id %]');
+      var overview_div = $('#[% cmd.id %]_overview');
+
       graph_div
         .addClass('cmd-graph')
 
+      overview_div
+        .addClass('cmd-overview')
+
+      var dataset = [];
+
       var point_details = graph_div.find('div.point_details').detach();
 
+      point_details
+        .each(function(i)
+        {
+          var $this = $(this)
+          dataset.push([
+            $this
+              .find('.rev_stamp')
+              .text() * 1000
+            ,
+            $this
+              .find('.speed')
+              .text()
+          ])
+        })
+
       var data = {
-        data: [
-          [%~ FOREACH result IN result_rows ~%]
-            [ [% result.revision_stamp * 1000 %], [% result.avg_time %] ],
-          [%~ END ~%]
-        null],
+        data: dataset,
         lines: { show: true },
         points: { show: true },
         hoverable: true,
@@ -86,6 +97,11 @@
       };
       var options =
       {
+        series:
+        {
+          points: { show: true },
+          lines: { show: true }
+        },
         yaxis:
         {
           min: 0,
@@ -93,6 +109,8 @@
         },
         xaxis:
         {
+          min: [% (last_stamp - 60 * 24 * 60 * 60) * 1000 %],
+          max: [% last_stamp * 1000 %],
           tickFormatter: function (v, axis) { return (new Date(v)).toDateString(); }
         },
         legend:
@@ -105,7 +123,39 @@
           clickable: true
         }
       };
-      $.plot(graph_div, [data], options);
+      var plot = $.plot(graph_div, [data], options);
+
+      var overview = $.plot(overview_div, [data],
+        {
+          series:
+          {
+            points: { show: false },
+            lines: { show: true, lineWidth: 1 },
+            shadowSize: 0
+          },
+          xaxis: { ticks: [], mode: "time" },
+          yaxis: { ticks: [], min: 0, autoscaleMargin: 0.1 },
+          selection: { mode: "x" }
+        }
+      )
+
+      graph_div
+        .bind("plotselected", function (event, ranges) {
+          // do the zooming
+          plot = $.plot(graph_div, [dataset],
+            $.extend(true, {}, options, {
+              xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to }
+            })
+          );
+
+        // don't fire event on the overview to prevent eternal loop
+        overview.setSelection(ranges, true);
+    });
+    
+    overview_div
+    .bind("plotselected", function (event, ranges) {
+        plot.setSelection(ranges);
+    });
 
       tooltip = $("<div />")
         .addClass('tooltip')

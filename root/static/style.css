@@ -4,6 +4,11 @@ body {
  color:#000;
 }
 
+div.hidden
+{
+  display: none;
+}
+
 div.cmd-label
 {
   font-size: 2em;
@@ -15,6 +20,13 @@ div.cmd-graph
 {
   width: 640px;
   height: 240px;
+}
+
+div.cmd-overview
+{
+  margin-top:20px;
+  width: 640px;
+  height:50px
 }
 
 div.details_hold
