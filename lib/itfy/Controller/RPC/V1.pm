@@ -3,6 +3,7 @@ use Moose;
 use namespace::autoclean;
 use JSON::Any;
 use autodie qw/:all/;
+use Try::Tiny;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -127,6 +128,27 @@ sub todo : Private
   $c->log->debug( Data::Dumper::Dumper( $c->stash->{rpcout}->{list} ) );
 }
 
+sub rev_error : Private
+{
+  my $self   = shift;
+  my $c      = shift;
+  my $rev_id = shift;
+
+  my $bench_branch_rev = $c->model('ItfyDB::BenchBranchRev')->find($rev_id);
+  next
+      unless defined $bench_branch_rev;
+
+  my $run = $bench_branch_rev->create_related(
+    'bench_run',
+    {
+      machine_id   => $c->stash->{machine}->machine_id,
+      submit_stamp => time,
+      success      => "false",
+    }
+  );
+
+}
+
 sub rev_done : Private
 {
   my $self = shift;
@@ -149,6 +171,7 @@ sub rev_done : Private
           {
             machine_id   => $c->stash->{machine}->machine_id,
             submit_stamp => time,
+            success      => "true",
           }
         );
 
