@@ -88,6 +88,7 @@ CREATE TABLE IF NOT EXISTS `bench_run` (
   `machine_id` varchar(36) NOT NULL,
   `bench_branch_rev_id` varchar(36) NOT NULL,
   `submit_stamp` int unsigned NOT NULL,
+  `success` boolean default false NOT NULL,
   PRIMARY KEY (`bench_run_id`)
 );
 
