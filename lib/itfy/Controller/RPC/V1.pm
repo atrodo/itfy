@@ -4,6 +4,7 @@ use namespace::autoclean;
 use JSON::Any;
 use autodie qw/:all/;
 use Try::Tiny;
+use File::Temp qw/ tempfile /;
 
 BEGIN { extends 'Catalyst::Controller'; }
 
@@ -241,6 +242,15 @@ sub add_branch_rev : Private
 {
   my $self = shift;
   my $c    = shift;
+
+  # Save the data
+  my $tmp = File::Temp->new(
+    UNLINK => 0,
+    TEMPLATE => "packet." . time . ".XXXXXX",
+    DIR => $c->config->{meta_repo_root},
+  );
+  print $tmp $c->request->params->{payload};
+  close $tmp;
 
   my $rpcin = JSON::Any->jsonToObj( $c->request->params->{payload} || "{}" );
 
