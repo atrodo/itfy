@@ -27,6 +27,7 @@ sub default : Path : Args
   my $self    = shift;
   my $c       = shift;
   my $api_key = shift;
+  my $action  = shift;
 
   my $machine = $c->model('ItfyDB::Machine')->find( { api_key => $api_key } );
   if ( !defined $machine )
@@ -41,7 +42,7 @@ sub default : Path : Args
   $c->stash->{machine} = $machine;
   $c->stash->{rpcout}  = {};
 
-  $c->forward( join "/", @_ );
+  $c->forward( $action, \@_ );
 
   $c->response->body( JSON::Any->objToJson( $c->stash->{rpcout} ) );
   $c->response->content_type("application/json");
