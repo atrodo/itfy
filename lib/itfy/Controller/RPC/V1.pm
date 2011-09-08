@@ -212,11 +212,14 @@ sub get_rev
   local $ENV{GIT_DIR} = $c->config->{meta_repo_root} . "/$git_name/.git";
 
   my $git_log = qx/git log $rev -1 --format=%H:%ct:%cD/;
-  if ( !defined $git_log )
+  if ( $git_log eq "")
   {
     system("git fetch");
     my $git_log = qx/git log $rev -1 --format=%H:%ct:%cD/;
   }
+
+  die "Could not find revision: $rev"
+    if $git_log eq "";
 
   # Find the aka, date and stamp
   chomp $git_log;
